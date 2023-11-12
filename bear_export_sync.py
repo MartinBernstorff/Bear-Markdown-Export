@@ -56,6 +56,7 @@ export_image_repository = True  # Export all notes as md but link images to
                                  # Only used if `export_as_textbundles = False`
 
 import os
+
 HOME = os.getenv('HOME', '')
 default_out_folder = os.path.join(HOME, "Work", "BearNotes")
 default_backup_folder = os.path.join(HOME, "Work", "BearSyncBackup")
@@ -63,16 +64,16 @@ default_backup_folder = os.path.join(HOME, "Work", "BearSyncBackup")
 # NOTE! Your user 'HOME' path and '/BearNotes' is added below!
 # NOTE! So do not change anything below here!!!
 
-import sqlite3
+import argparse
 import datetime
-import re
-import subprocess
-import urllib.parse
-import time
-import shutil
 import fnmatch
 import json
-import argparse
+import re
+import shutil
+import sqlite3
+import subprocess
+import time
+import urllib.parse
 
 parser = argparse.ArgumentParser(description="Sync Bear notes")
 parser.add_argument("--out", default=default_out_folder, help="Path where Bear notes will be synced")
@@ -488,7 +489,7 @@ def sync_md_updates():
 
 
 def check_if_image_added(md_text, md_file):
-    if not '.textbundle/' in md_file:
+    if '.textbundle/' not in md_file:
         return False
     matches = re.findall(r'!\[.*?\]\(assets/(.+?_).+?\)', md_text)
     for image_match in matches:
@@ -585,7 +586,7 @@ def get_tag_from_path(md_text, md_file, root_path, inbox_for_root=True, extra_ta
         sub_path = os.path.split(sub_path)[0]
     if sub_path == '': 
         if inbox_for_root:
-            tag = '#.inbox'
+            tag = ''
         else:
             tag = ''
     elif sub_path.startswith('_'):
